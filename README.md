@@ -94,13 +94,21 @@ curl -X POST http://localhost:8099/api/payroll/generate \
 
 ## 3. Run the frontend
 
-No build step — just open the file, or serve it with any static server:
+No build step is required. The frontend can be served using a static server.
 
 ```bash
 cd frontend
-python3 -m http.server 5500
-# then open http://localhost:5500
+npx serve
 ```
+
+Then open:
+
+```text
+http://localhost:3000
+```
+
+> Make sure the Java/Spring Boot backend is also running before using features that require the API.
+
 
 The frontend calls the API at `http://localhost:8099/api` (see `API_BASE` in `js/api.js` — change it if your backend runs elsewhere). CORS is already enabled on the backend for local development.
 
