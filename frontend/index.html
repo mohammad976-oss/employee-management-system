@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ledger — Employee Management System</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="mark">Ledger</div>
+      <div class="tag">Employee Management</div>
+    </div>
+    <nav class="nav">
+      <button class="nav-item active" data-view="dashboard"><span class="num">01</span> Dashboard</button>
+      <button class="nav-item" data-view="employees"><span class="num">02</span> Employees</button>
+      <button class="nav-item" data-view="departments"><span class="num">03</span> Departments</button>
+      <button class="nav-item" data-view="attendance"><span class="num">04</span> Attendance</button>
+      <button class="nav-item" data-view="payroll"><span class="num">05</span> Payroll</button>
+    </nav>
+    <div class="sidebar-footer">
+      Connects to the Spring Boot API at<br><span class="mono">localhost:8080/api</span>
+    </div>
+  </aside>
+
+  <!-- ===================== MAIN ===================== -->
+  <main class="main">
+
+    <div id="conn-banner" class="conn-banner">
+      Can't reach the backend at <strong>localhost:8080</strong>. Start the Spring Boot app
+      (<span class="mono">mvn spring-boot:run</span> inside <span class="mono">backend/</span>) and make sure MySQL is running, then reload this page.
+    </div>
+
+    <!-- ===== DASHBOARD ===== -->
+    <section id="view-dashboard" class="view active">
+      <div class="page-header">
+        <div>
+          <div class="eyebrow">Overview</div>
+          <h1>Dashboard</h1>
+          <p class="sub">A snapshot of your workforce, attendance, and payroll.</p>
+        </div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-card"><div class="label">Active employees</div><div class="value" id="stat-employees">0</div></div>
+        <div class="stat-card"><div class="label">Departments</div><div class="value" id="stat-departments">0</div></div>
+        <div class="stat-card"><div class="label">Present today</div><div class="value" id="stat-present-today">0</div></div>
+        <div class="stat-card"><div class="label">Total net payroll issued</div><div class="value figure" id="stat-payroll-total" style="font-size:19px;">₹0.00</div></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header"><h2>Recent payslips</h2></div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead><tr><th>Employee</th><th>Period</th><th>Gross</th><th>Deductions</th><th>Net pay</th></tr></thead>
+            <tbody id="recent-payroll-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== EMPLOYEES ===== -->
+    <section id="view-employees" class="view">
+      <div class="page-header">
+        <div>
+          <div class="eyebrow">People</div>
+          <h1>Employees</h1>
+          <p class="sub">Personal details, contact info, department, and salary basis.</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header"><h2 id="employee-form-title">Add an employee</h2></div>
+        <div class="panel-body">
+          <form id="employee-form">
+            <div class="form-grid">
+              <div class="field"><label>First name</label><input id="emp-first-name" required></div>
+              <div class="field"><label>Last name</label><input id="emp-last-name" required></div>
+              <div class="field"><label>Email</label><input id="emp-email" type="email" required></div>
+              <div class="field"><label>Phone</label><input id="emp-phone"></div>
+              <div class="field"><label>Date of birth</label><input id="emp-dob" type="date"></div>
+              <div class="field">
+                <label>Gender</label>
+                <select id="emp-gender">
+                  <option value="">—</option><option>Male</option><option>Female</option><option>Other</option>
+                </select>
+              </div>
+              <div class="field span-2"><label>Address</label><input id="emp-address"></div>
+              <div class="field"><label>Date of joining</label><input id="emp-doj" type="date"></div>
+              <div class="field"><label>Designation</label><input id="emp-designation" placeholder="e.g. Software Engineer"></div>
+              <div class="field">
+                <label>Department</label>
+                <select id="emp-department"></select>
+              </div>
+              <div class="field">
+                <label>Status</label>
+                <select id="emp-status">
+                  <option value="ACTIVE">Active</option>
+                  <option value="INACTIVE">Inactive</option>
+                  <option value="TERMINATED">Terminated</option>
+                </select>
+              </div>
+              <div class="field"><label>Basic monthly salary (₹)</label><input id="emp-salary" type="number" min="0" step="0.01" required></div>
+              <div class="field"><label>Hourly rate (₹, optional)</label><input id="emp-hourly-rate" type="number" min="0" step="0.01" placeholder="Auto-derived if left blank"></div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" id="emp-submit-btn">Add employee</button>
+              <button type="button" class="btn btn-ghost" id="emp-cancel-btn">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header"><h2>All employees</h2></div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead><tr><th>ID</th><th>Name</th><th>Department</th><th>Designation</th><th>Basic salary</th><th>Status</th><th></th></tr></thead>
+            <tbody id="employees-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== DEPARTMENTS ===== -->
+    <section id="view-departments" class="view">
+      <div class="page-header">
+        <div>
+          <div class="eyebrow">Structure</div>
+          <h1>Departments</h1>
+          <p class="sub">Where each employee belongs, and who leads it.</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header"><h2 id="department-form-title">Add a department</h2></div>
+        <div class="panel-body">
+          <form id="department-form">
+            <div class="form-grid">
+              <div class="field"><label>Department name</label><input id="dept-name" required></div>
+              <div class="field"><label>Head of department</label><input id="dept-head"></div>
+              <div class="field"><label>Location</label><input id="dept-location"></div>
+              <div class="field span-2"><label>Description</label><input id="dept-description"></div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" id="dept-submit-btn">Add department</button>
+              <button type="button" class="btn btn-ghost" id="dept-cancel-btn">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header"><h2>All departments</h2></div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead><tr><th>Name</th><th>Head</th><th>Location</th><th>Employees</th><th></th></tr></thead>
+            <tbody id="departments-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== ATTENDANCE ===== -->
+    <section id="view-attendance" class="view">
+      <div class="page-header">
+        <div>
+          <div class="eyebrow">Daily record</div>
+          <h1>Attendance</h1>
+          <p class="sub">Mark present/absent days, hours worked, and overtime.</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header"><h2>Mark attendance</h2></div>
+        <div class="panel-body">
+          <form id="attendance-form">
+            <div class="form-grid">
+              <div class="field span-2"><label>Employee</label><select id="att-employee" required></select></div>
+              <div class="field"><label>Date</label><input id="att-date" type="date" required></div>
+              <div class="field">
+                <label>Status</label>
+                <select id="att-status">
+                  <option value="PRESENT">Present</option>
+                  <option value="ABSENT">Absent</option>
+                  <option value="HALF_DAY">Half day</option>
+                  <option value="LEAVE">Leave</option>
+                  <option value="HOLIDAY">Holiday</option>
+                </select>
+              </div>
+              <div class="field"><label>Hours worked</label><input id="att-hours" type="number" min="0" step="0.5" value="8"></div>
+              <div class="field"><label>Overtime hours</label><input id="att-overtime" type="number" min="0" step="0.5" value="0"></div>
+              <div class="field span-2"><label>Remarks (optional)</label><input id="att-remarks"></div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Save attendance</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header"><h2>Attendance log</h2></div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead><tr><th>Date</th><th>Employee</th><th>Status</th><th>Hours</th><th>Overtime</th><th></th></tr></thead>
+            <tbody id="attendance-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PAYROLL ===== -->
+    <section id="view-payroll" class="view">
+      <div class="page-header">
+        <div>
+          <div class="eyebrow">Salary run</div>
+          <h1>Payroll</h1>
+          <p class="sub">Basic pay + overtime, minus tax and other deductions, from that month's attendance.</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header"><h2>Generate a payslip</h2></div>
+        <div class="panel-body">
+          <form id="payroll-form">
+            <div class="form-grid">
+              <div class="field span-2"><label>Employee</label><select id="pay-employee" required></select></div>
+              <div class="field">
+                <label>Month</label>
+                <select id="pay-month">
+                  <option value="1">January</option><option value="2">February</option><option value="3">March</option>
+                  <option value="4">April</option><option value="5">May</option><option value="6">June</option>
+                  <option value="7">July</option><option value="8">August</option><option value="9">September</option>
+                  <option value="10">October</option><option value="11">November</option><option value="12">December</option>
+                </select>
+              </div>
+              <div class="field"><label>Year</label><input id="pay-year" type="number"></div>
+              <div class="field"><label>Tax rate % (optional, default 10%)</label><input id="pay-tax-rate" type="number" min="0" step="0.1" placeholder="10"></div>
+              <div class="field"><label>Other deductions (₹, optional)</label><input id="pay-other-deduction" type="number" min="0" step="0.01" placeholder="0"></div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Generate payslip</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div id="payslip-container" style="margin-bottom:22px;"></div>
+
+      <div class="panel">
+        <div class="panel-header"><h2>Payroll history</h2></div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead><tr><th>Employee</th><th>Period</th><th>Attendance</th><th>Overtime</th><th>Gross</th><th>Deductions</th><th>Net pay</th><th></th></tr></thead>
+            <tbody id="payroll-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<script src="js/api.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
