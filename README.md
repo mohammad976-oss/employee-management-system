@@ -68,7 +68,7 @@ cd backend
 mvn spring-boot:run
 ```
 
-The API starts on **http://localhost:8080**. On first run, Hibernate creates all tables automatically (`spring.jpa.hibernate.ddl-auto=update`).
+The API starts on **http://localhost:8099**. On first run, Hibernate creates all tables automatically (`spring.jpa.hibernate.ddl-auto=update`).
 
 ### API endpoints
 
@@ -87,7 +87,7 @@ The API starts on **http://localhost:8080**. On first run, Hibernate creates all
 Example — generate August 2026 payroll for employee #1:
 
 ```bash
-curl -X POST http://localhost:8080/api/payroll/generate \
+curl -X POST http://localhost:8099/api/payroll/generate \
   -H "Content-Type: application/json" \
   -d '{"employeeId": 1, "payMonth": 8, "payYear": 2026}'
 ```
@@ -102,7 +102,7 @@ python3 -m http.server 5500
 # then open http://localhost:5500
 ```
 
-The frontend calls the API at `http://localhost:8080/api` (see `API_BASE` in `js/api.js` — change it if your backend runs elsewhere). CORS is already enabled on the backend for local development.
+The frontend calls the API at `http://localhost:8099/api` (see `API_BASE` in `js/api.js` — change it if your backend runs elsewhere). CORS is already enabled on the backend for local development.
 
 ## How the salary calculation works
 
