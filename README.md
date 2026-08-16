@@ -68,7 +68,7 @@ cd backend
 mvn spring-boot:run
 ```
 
-The API starts on **http://localhost:8099**. On first run, Hibernate creates all tables automatically (`spring.jpa.hibernate.ddl-auto=update`).
+The API starts on **http://localhost:8099/api/employee**. On first run, Hibernate creates all tables automatically (`spring.jpa.hibernate.ddl-auto=update`).
 
 ### API endpoints
 
