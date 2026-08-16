@@ -1,6 +1,6 @@
 // Thin wrapper around fetch() for talking to the Spring Boot backend.
 // Change API_BASE if your backend runs somewhere other than localhost:8080.
-const API_BASE = 'http://localhost:8099/api';
+const API_BASE = 'https://employee-management-system-1-5p8z.onrender.com/api';
 
 async function apiRequest(path, options = {}) {
   const res = await fetch(`${API_BASE}${path}`, {
