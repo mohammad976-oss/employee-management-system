@@ -9,11 +9,11 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOriginPatterns(
+        registry.addMapping("/api/**")
+                .allowedOrigins(
+                        "https://mohammad976-oss-employee-management.onrender.com",
                         "http://localhost:3000",
-                        "http://127.0.0.1:3000",
-                        "https://employee-management-system-frontend-3fso.onrender.com"
+                        "http://127.0.0.1:3000"
                 )
                 .allowedMethods(
                         "GET",
@@ -24,7 +24,6 @@ public class WebConfig implements WebMvcConfigurer {
                         "OPTIONS"
                 )
                 .allowedHeaders("*")
-                .allowCredentials(false)
-                .maxAge(3600);
+                .allowCredentials(false);
     }
 }
