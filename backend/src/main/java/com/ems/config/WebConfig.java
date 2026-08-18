@@ -13,7 +13,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins(
                         "http://localhost:3000",
                         "http://127.0.0.1:3000",
-                        "https://employee-management-system-1-5p8z.onrender.com"
+                        "https://mohammad976-oss-employee-management.onrender.com"
                 )
                 .allowedMethods(
                         "GET",
@@ -23,6 +23,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "PATCH",
                         "OPTIONS"
                 )
-                .allowedHeaders("*");
+                .allowedHeaders("*")
+                .allowCredentials(false);
     }
 }
