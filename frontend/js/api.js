@@ -1,6 +1,6 @@
 // API URLs
 const LOCAL_API_BASE = 'http://localhost:8099/api';
-const RENDER_API_BASE = 'https://employee-management-system-1-5p8z.onrender.com/api';
+const RENDER_API_BASE = 'https://employee-management-system-api-jl72.onrender.com/api';
 
 // Automatically select the correct backend
 const API_BASE = window.location.hostname === 'localhost'
